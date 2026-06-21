@@ -67,7 +67,35 @@
     color: var(--ink);
   }
   .dropdown a:hover { color: var(--muted); padding-left: 26px; }
-  .nav-mobile-toggle { display: none; color: #fff; font-size: 12px; letter-spacing: 2px; }
+  .nav-mobile-toggle {
+    display: none; color: #fff; font-size: 12px; letter-spacing: 2px;
+    cursor: pointer; background: none; border: none; font-family: 'Montserrat', sans-serif;
+    z-index: 200; position: relative;
+  }
+
+  /* mobile menu panel */
+  .mobile-menu {
+    position: fixed; inset: 0; z-index: 150;
+    background: var(--paper);
+    display: flex; flex-direction: column;
+    align-items: flex-start; justify-content: center;
+    gap: 26px; padding: 60px 36px;
+    transform: translateY(-100%);
+    transition: transform 0.4s ease;
+  }
+  .mobile-menu.open { transform: translateY(0); }
+  .mobile-menu a, .mobile-menu .mm-group-label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 22px; letter-spacing: 1px; color: var(--ink);
+  }
+  .mobile-menu .mm-group { display: flex; flex-direction: column; gap: 14px; }
+  .mobile-menu .mm-sub { display: flex; flex-direction: column; gap: 12px; padding-left: 18px; margin-top: 10px; }
+  .mobile-menu .mm-sub a { font-size: 16px; color: var(--muted); }
+  .mobile-close {
+    position: absolute; top: 28px; right: 28px;
+    background: none; border: none; font-size: 13px; letter-spacing: 2px;
+    color: var(--ink); cursor: pointer; font-family: 'Montserrat', sans-serif;
+  }
 
   /* ── HERO SLIDESHOW ── */
   .slideshow {
@@ -201,8 +229,7 @@
 
   @media (max-width: 760px) {
     nav.nav-links { display: none; }
-    .nav-mobile-toggle { display: block; }
-    .about-layout { grid-template-columns: 1fr; }
+    .nav-mobile-toggle { display: block; }    .about-layout { grid-template-columns: 1fr; }
     header.site-nav { padding: 22px 24px; }
     .page { padding: 120px 24px 80px; }
     footer.site-footer { flex-direction: column; gap: 14px; padding: 26px 24px; }
@@ -226,8 +253,23 @@
     <div><a href="#" onclick="showPage('about')">About</a></div>
     <div><a href="#" onclick="showPage('contact')">Contact</a></div>
   </nav>
-  <span class="nav-mobile-toggle">MENU</span>
+  <button class="nav-mobile-toggle" onclick="toggleMobileMenu(true)">MENU</button>
 </header>
+
+<div class="mobile-menu" id="mobile-menu">
+  <button class="mobile-close" onclick="toggleMobileMenu(false)">CLOSE ✕</button>
+  <div class="mm-group">
+    <span class="mm-group-label">Paintings</span>
+    <div class="mm-sub">
+      <a href="#" onclick="mmNav('paintings')">Originals</a>
+      <a href="#" onclick="mmNav('paintings')">Small Originals</a>
+      <a href="#" onclick="mmNav('paintings')">Notecard Packs</a>
+    </div>
+  </div>
+  <a href="#" onclick="mmNav('previous')">Previous Work</a>
+  <a href="#" onclick="mmNav('about')">About</a>
+  <a href="#" onclick="mmNav('contact')">Contact</a>
+</div>
 
 <!-- HOME / SLIDESHOW -->
 <section class="page active" id="page-home">
@@ -321,12 +363,10 @@ My work sits in expressive, figurative territory, I'm more interested in a paint
     <h1 class="page-title">Contact</h1>
     <div class="contact-layout">
       <p>For commissions, purchases, or just to say hello, reach out below.</p>
-<form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
-        <input type="hidden" name="form-name" value="contact" />
-        <p style="display:none"><label>Don't fill this out: <input name="bot-field" /></label></p>
-        <div class="field"><label>Name</label><input type="text" name="name" required /></div>
-        <div class="field"><label>Email</label><input type="email" name="email" required /></div>
-        <div class="field"><label>Message</label><textarea rows="5" name="message" required></textarea></div>
+      <form>
+        <div class="field"><label>Name</label><input type="text" /></div>
+        <div class="field"><label>Email</label><input type="email" /></div>
+        <div class="field"><label>Message</label><textarea rows="5"></textarea></div>
         <button type="submit" class="submit-btn">Send</button>
       </form>
     </div>
@@ -347,6 +387,15 @@ My work sits in expressive, figurative territory, I'm more interested in a paint
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-' + name).classList.add('active');
     window.scrollTo(0, 0);
+  }
+
+  // ── MOBILE MENU ──
+  function toggleMobileMenu(open) {
+    document.getElementById('mobile-menu').classList.toggle('open', open);
+  }
+  function mmNav(name) {
+    showPage(name);
+    toggleMobileMenu(false);
   }
 
   // ── SLIDESHOW ──
